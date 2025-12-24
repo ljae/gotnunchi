@@ -175,6 +175,38 @@ class _SeoulMapWidgetState extends State<SeoulMapWidget> {
       );
     }
 
+    // Create markers for labels
+    final markers = _districtPolygons.map((polygon) {
+      return Marker(
+        point: _calculateCentroid(polygon.points),
+        width: 80,
+        height: 30,
+        child: IgnorePointer( // Allow tapping through the label to the polygon
+          child: Center(
+            child: Text(
+              polygon.districtName,
+              style: TextStyle(
+                color: widget.selectedDistrictId == polygon.districtId
+                    ? Colors.white
+                    : Colors.black87,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                shadows: [
+                  Shadow(
+                    offset: const Offset(1, 1),
+                    blurRadius: 2,
+                    color: Colors.white.withValues(alpha: 0.8),
+                  ),
+                ],
+              ),
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+      );
+    }).toList();
+
     return FlutterMap(
       options: MapOptions(
         initialCenter: _seoulCenter,
@@ -198,17 +230,33 @@ class _SeoulMapWidgetState extends State<SeoulMapWidget> {
         if (_districtPolygons.isNotEmpty)
           PolygonLayer(
             polygons: _districtPolygons.map((districtPolygon) {
+              final isSelected = districtPolygon.districtId == widget.selectedDistrictId;
               return Polygon(
                 points: districtPolygon.points,
-                color: _getPolygonColor(districtPolygon.districtId).withValues(alpha: 0.6),
+                color: _getPolygonColor(districtPolygon.districtId).withValues(alpha: 0.7),
                 borderColor: Colors.white,
                 borderStrokeWidth: 2.0,
                 isFilled: true,
+                isDotted: false,
               );
             }).toList(),
           ),
+        
+        // Render labels on top
+        if (_districtPolygons.isNotEmpty)
+          MarkerLayer(markers: markers),
       ],
     );
+  }
+
+  LatLng _calculateCentroid(List<LatLng> points) {
+    double latSum = 0;
+    double lngSum = 0;
+    for (var point in points) {
+      latSum += point.latitude;
+      lngSum += point.longitude;
+    }
+    return LatLng(latSum / points.length, lngSum / points.length);
   }
 
   void _handleMapTap(LatLng latLng) {

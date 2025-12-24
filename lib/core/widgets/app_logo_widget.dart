@@ -14,7 +14,7 @@ class AppLogoWidget extends StatelessWidget {
 
   const AppLogoWidget({
     super.key,
-    this.height = 36,
+    this.height = 92,
     this.enableHomeNavigation = true,
   });
 

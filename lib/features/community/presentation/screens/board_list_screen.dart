@@ -18,11 +18,9 @@ class BoardListScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        leading: const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: AppLogoWidget(),
-        ),
-        title: Text(regionName),
+        centerTitle: true,
+        toolbarHeight: 110.0,
+        title: const AppLogoWidget(height: 92),
       ),
       body: postsAsyncValue.when(
         data: (posts) {

@@ -32,8 +32,8 @@ class _HomeMapScreenState extends State<HomeMapScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        toolbarHeight: 80.0, // Increased height for larger logo
-        title: const AppLogoWidget(height: 68), // Larger logo
+        toolbarHeight: 110.0, // Increased height for larger logo
+        title: const AppLogoWidget(height: 92), // Larger logo
       ),
       body: Column(
         children: [
@@ -70,7 +70,6 @@ class _HomeMapScreenState extends State<HomeMapScreen> {
                 
                 // Professional Map Styling
                 defaultColor: const Color(0xFFE2E8F0), // Slate 200 - Clean, neutral base
-                strokeColor: const Color(0xFFFFFFFF),  // White stroke for clean separation
                 
                 // Highlight the selected region
                 colors: _selectedRegionId != null 

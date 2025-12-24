@@ -15,11 +15,10 @@ class PostDetailScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        leading: const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: AppLogoWidget(),
-        ),
-        title: const Text('Post'),
+        centerTitle: true,
+        toolbarHeight: 110.0,
+        title: const AppLogoWidget(height: 92),
+        // Keep leading back button default or customize if needed
       ),
       body: postAsyncValue.when(
         data: (post) {

@@ -40,11 +40,9 @@ class _SeoulDistrictMapScreenState extends State<SeoulDistrictMapScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: AppLogoWidget(),
-        ),
-        title: const Text('Seoul Districts'),
+        centerTitle: true,
+        toolbarHeight: 110.0,
+        title: const AppLogoWidget(height: 92),
       ),
       body: Column(
         children: [

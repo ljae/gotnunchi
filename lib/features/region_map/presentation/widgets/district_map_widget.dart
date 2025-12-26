@@ -256,8 +256,6 @@ class _DistrictMapWidgetState extends State<DistrictMapWidget> {
                 color: _getPolygonColor(districtPolygon.districtId).withValues(alpha: 0.7),
                 borderColor: Colors.white,
                 borderStrokeWidth: 2.0,
-                isFilled: true,
-                isDotted: false,
               );
             }).toList(),
           ),

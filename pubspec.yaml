@@ -39,10 +39,11 @@ dependencies:
   go_router: ^12.1.3
   google_fonts: ^6.1.0
   intl: ^0.19.0
+  flutter_animate: ^4.5.0
 
   #Map packages for Seoul district visualization
-  flutter_map: ^6.1.0
-  flutter_map_geojson: ^1.0.8
+  flutter_map: ^7.0.2
+  power_geojson: ^1.2.5
   latlong2: ^0.9.0
 
   # Firebase packages
@@ -50,7 +51,6 @@ dependencies:
   firebase_auth: ^5.3.3
   cloud_firestore: ^5.5.2
   firebase_storage: ^12.3.6
-  flutter_map_cancellable_tile_provider: ^3.1.1
 
 dev_dependencies:
   flutter_test:

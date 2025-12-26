@@ -9,6 +9,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.59"
+  animated_stack_widget:
+    dependency: transitive
+    description:
+      name: animated_stack_widget
+      sha256: ce4788dd158768c9d4388354b6fb72600b78e041a37afc4c279c63ecafcb9408
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.4"
   async:
     dependency: transitive
     description:
@@ -73,6 +81,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.19.1"
+  console_tools:
+    dependency: transitive
+    description:
+      name: console_tools
+      sha256: f7dd45bc90010f1e411964a91458148f2bc3c8a6b5fad61f793943e2d48a63e2
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   countries_world_map:
     dependency: "direct main"
     description:
@@ -97,22 +113,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.8"
-  dio:
+  dart_earcut:
     dependency: transitive
     description:
-      name: dio
-      sha256: d90ee57923d1828ac14e492ca49440f65477f4bb1263575900be731a3dac66a9
+      name: dart_earcut
+      sha256: e485001bfc05dcbc437d7bfb666316182e3522d4c3f9668048e004d0eb2ce43b
       url: "https://pub.dev"
     source: hosted
-    version: "5.9.0"
-  dio_web_adapter:
+    version: "1.2.0"
+  enhanced_future_builder:
     dependency: transitive
     description:
-      name: dio_web_adapter
-      sha256: "7586e476d70caecaf1686d21eee7247ea43ef5c345eab9e0cc3583ff13378d78"
+      name: enhanced_future_builder
+      sha256: d0360c6cf190f35db6f3add919505afa02babe7471bfc960c2ad88c2ace4ad21
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.1"
+    version: "2.0.0"
   fake_async:
     dependency: transitive
     description:
@@ -206,6 +222,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_animate:
+    dependency: "direct main"
+    description:
+      name: flutter_animate
+      sha256: "7befe2d3252728afb77aecaaea1dec88a89d35b9b1d2eea6d04479e8af9117b5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.5.2"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -218,26 +242,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_map
-      sha256: "87cc8349b8fa5dccda5af50018c7374b6645334a0d680931c1fe11bce88fa5bb"
+      sha256: "2ecb34619a4be19df6f40c2f8dce1591675b4eff7a6857bd8f533706977385da"
       url: "https://pub.dev"
     source: hosted
-    version: "6.2.1"
-  flutter_map_cancellable_tile_provider:
-    dependency: "direct main"
-    description:
-      name: flutter_map_cancellable_tile_provider
-      sha256: ae18dd59faf74f3eca1d28f83e59b47741bbff962e123bbebe9335c04d432f44
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0"
-  flutter_map_geojson:
-    dependency: "direct main"
-    description:
-      name: flutter_map_geojson
-      sha256: "0d23f7be720b6d1fdbcd137ee16f597a412dd2d3306d31c10ff59c213af174c2"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.8"
+    version: "7.0.2"
   flutter_riverpod:
     dependency: "direct main"
     description:
@@ -246,6 +254,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.6.1"
+  flutter_shaders:
+    dependency: transitive
+    description:
+      name: flutter_shaders
+      sha256: "34794acadd8275d971e02df03afee3dee0f98dbfb8c4837082ad0034f612a3e2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.3"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -256,6 +272,22 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  geodesy:
+    dependency: transitive
+    description:
+      name: geodesy
+      sha256: e8f843c57e27e562755272a5fe6700c04567d7a6069881d0966ccda71c0f69ad
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.10.2"
+  geojson_vi:
+    dependency: transitive
+    description:
+      name: geojson_vi
+      sha256: a47e0efd17617aef8b239719ea2a3ef743563e873709531ee5498ccfd04069f2
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.5"
   go_router:
     dependency: "direct main"
     description:
@@ -392,14 +424,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
-  mime:
+  nested:
     dependency: transitive
     description:
-      name: mime
-      sha256: "41a20518f0cb1256669420fdba0cd90d21561e560ac240f26ef8322e45bb7ed6"
+      name: nested
+      sha256: "03bac4c528c64c95c722ec99280375a6f2fc708eec17c7b3f07253b626cd2a20"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.0"
+    version: "1.0.0"
   path:
     dependency: transitive
     description:
@@ -480,6 +512,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.1"
+  power_geojson:
+    dependency: "direct main"
+    description:
+      name: power_geojson
+      sha256: c0fcb066741566ea6050697b30f14d52faa072c1591e3ba8d3da8a0ec7a17264
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.5+5"
   proj4dart:
     dependency: transitive
     description:
@@ -488,6 +528,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
+  provider:
+    dependency: transitive
+    description:
+      name: provider
+      sha256: "4e82183fa20e5ca25703ead7e05de9e4cceed1fbd1eadc1ac3cb6f565a09f272"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.5+1"
   quantity:
     dependency: transitive
     description:

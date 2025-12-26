@@ -16,7 +16,7 @@ class PostDetailScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        toolbarHeight: 110.0,
+        toolbarHeight: 140.0,
         title: const AppLogoWidget(height: 92),
         // Keep leading back button default or customize if needed
       ),

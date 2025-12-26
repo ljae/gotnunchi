@@ -1,11 +1,22 @@
 import 'package:gotnunchi/features/community/domain/entities/post.dart';
 
 class MockPostRepository {
-  List<Post> getPostsByRegion(String regionId) {
+  List<Post> getPostsByRegion(List<String> regionIds) {
     // Generate dummy posts.
     // In a real app, this would filter a large list or fetch from API.
-    // For now, we return specific posts for the requested region and some generic ones.
+    // We'll return posts that match ANY of the selected regions.
     
+    // For this mock, we'll generate a few posts for each requested region
+    List<Post> allPosts = [];
+    
+    for (String regionId in regionIds) {
+       allPosts.addAll(_generatePostsForRegion(regionId));
+    }
+
+    return allPosts;
+  }
+
+  List<Post> _generatePostsForRegion(String regionId) {
     return [
       Post(
         id: '1',
@@ -102,7 +113,7 @@ class MockPostRepository {
 
   Post? getPostById(String id) {
     // Just a mocked lookup
-    final allPosts = getPostsByRegion('dummy'); 
+    final allPosts = getPostsByRegion(['dummy']); 
     try {
         return allPosts.firstWhere((element) => element.id == id);
     } catch (e) {

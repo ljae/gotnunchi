@@ -4,25 +4,43 @@ import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-/// Interactive map widget displaying Seoul's 25 districts
+import 'package:gotnunchi/core/constants/region_data.dart';
+
+/// Interactive map widget displaying districts for a specific region
 ///
 /// Loads GeoJSON data and renders district boundaries
 /// Supports tap interaction for district selection
-class SeoulMapWidget extends StatefulWidget {
+class DistrictMapWidget extends StatefulWidget {
+  /// The parent region ID (e.g., KR-11, KR-41)
+  final String parentRegionId;
+
+  /// Path to the GeoJSON file for this region
+  final String geoJsonPath;
+
+  /// Initial center coordinate for the map
+  final LatLng initialCenter;
+
+  /// Initial zoom level
+  final double initialZoom;
+
   /// Callback when a district is tapped
   final Function(String districtId) onDistrictTap;
 
-  /// Currently selected district ID
-  final String? selectedDistrictId;
+  /// Currently selected district IDs (Multi-select)
+  final Set<String> selectedDistrictIds;
 
-  const SeoulMapWidget({
+  const DistrictMapWidget({
     super.key,
+    required this.parentRegionId,
+    required this.geoJsonPath,
+    required this.initialCenter,
+    required this.initialZoom,
     required this.onDistrictTap,
-    this.selectedDistrictId,
+    this.selectedDistrictIds = const {},
   });
 
   @override
-  State<SeoulMapWidget> createState() => _SeoulMapWidgetState();
+  State<DistrictMapWidget> createState() => _DistrictMapWidgetState();
 }
 
 class _DistrictPolygon {
@@ -37,42 +55,10 @@ class _DistrictPolygon {
   });
 }
 
-class _SeoulMapWidgetState extends State<SeoulMapWidget> {
+class _DistrictMapWidgetState extends State<DistrictMapWidget> {
   final List<_DistrictPolygon> _districtPolygons = [];
   bool _isLoading = true;
   String? _error;
-
-  // Seoul center coordinates
-  static const LatLng _seoulCenter = LatLng(37.5665, 126.9780);
-
-  // Map from Korean district names to our ID format
-  final Map<String, String> _nameToId = {
-    '강남구': 'KR-11-gangnam',
-    '강동구': 'KR-11-gangdong',
-    '강북구': 'KR-11-gangbuk',
-    '강서구': 'KR-11-gangseo',
-    '관악구': 'KR-11-gwanak',
-    '광진구': 'KR-11-gwangjin',
-    '구로구': 'KR-11-guro',
-    '금천구': 'KR-11-geumcheon',
-    '노원구': 'KR-11-nowon',
-    '도봉구': 'KR-11-dobong',
-    '동대문구': 'KR-11-dongdaemun',
-    '동작구': 'KR-11-dongjak',
-    '마포구': 'KR-11-mapo',
-    '서대문구': 'KR-11-seodaemun',
-    '서초구': 'KR-11-seocho',
-    '성동구': 'KR-11-seongdong',
-    '성북구': 'KR-11-seongbuk',
-    '송파구': 'KR-11-songpa',
-    '양천구': 'KR-11-yangcheon',
-    '영등포구': 'KR-11-yeongdeungpo',
-    '용산구': 'KR-11-yongsan',
-    '은평구': 'KR-11-eunpyeong',
-    '종로구': 'KR-11-jongno',
-    '중구': 'KR-11-jung',
-    '중랑구': 'KR-11-jungnang',
-  };
 
   @override
   void initState() {
@@ -83,12 +69,14 @@ class _SeoulMapWidgetState extends State<SeoulMapWidget> {
   Future<void> _loadGeoJson() async {
     try {
       // Load GeoJSON from assets
-      final String geoJsonString = await rootBundle
-          .loadString('lib/features/region_map/data/seoul_districts.geojson');
+      final String geoJsonString = await rootBundle.loadString(widget.geoJsonPath);
 
       // Parse GeoJSON
       final Map<String, dynamic> geoJson = json.decode(geoJsonString);
       final List<dynamic> features = geoJson['features'] ?? [];
+
+      // Get correct map for name conversion
+      final nameToIdMap = RegionData.getNameToIdMap(widget.parentRegionId);
 
       // Convert features to polygon data
       for (var feature in features) {
@@ -96,26 +84,53 @@ class _SeoulMapWidgetState extends State<SeoulMapWidget> {
         final geometry = feature['geometry'] as Map<String, dynamic>?;
 
         if (props != null && geometry != null) {
-          final String? koreanName = props['name'] as String?;
-          final String? districtId = koreanName != null ? _nameToId[koreanName] : null;
+          // GeoJSON properties usually have 'name' or similar for the Korean name
+          // The Gyeonggi file format needs to be checked, but usually 'ADM_DR_NM' or 'name'
+          // We'll try common keys
+          String? koreanName = props['name'] ?? props['ADM_DR_NM'] ?? props['sid_nm']; 
+          
+          if (koreanName != null) {
+             // Handle some potential whitespace or format issues
+             koreanName = koreanName.trim();
+          }
+
+          final String? districtId = koreanName != null ? nameToIdMap[koreanName] : null;
 
           if (districtId != null && geometry['type'] == 'Polygon') {
             final coordinates = geometry['coordinates'] as List<dynamic>;
 
-            // First array is outer boundary (we skip holes for simplicity)
             if (coordinates.isNotEmpty) {
               final outerRing = coordinates[0] as List<dynamic>;
               final points = outerRing.map((coord) {
                 final c = coord as List<dynamic>;
+                // GeoJSON is [lon, lat]
                 return LatLng(c[1] as double, c[0] as double);
               }).toList();
 
               _districtPolygons.add(_DistrictPolygon(
                 districtId: districtId,
-                districtName: koreanName!,
+                districtName: RegionData.getDistrictName(districtId) ?? koreanName!,
                 points: points,
               ));
             }
+          // Handle MultiPolygon if necessary (Gyeonggi might have some)
+          } else if (districtId != null && geometry['type'] == 'MultiPolygon') {
+              final coordinateGroups = geometry['coordinates'] as List<dynamic>;
+              for (var group in coordinateGroups) {
+                 if (group.isNotEmpty) {
+                    final outerRing = group[0] as List<dynamic>;
+                    final points = outerRing.map((coord) {
+                      final c = coord as List<dynamic>;
+                      return LatLng(c[1] as double, c[0] as double);
+                    }).toList();
+                    
+                     _districtPolygons.add(_DistrictPolygon(
+                      districtId: districtId,
+                      districtName: RegionData.getDistrictName(districtId) ?? koreanName!,
+                      points: points,
+                    ));
+                 }
+              }
           }
         }
       }
@@ -132,7 +147,7 @@ class _SeoulMapWidgetState extends State<SeoulMapWidget> {
   }
 
   Color _getPolygonColor(String districtId) {
-    if (districtId == widget.selectedDistrictId) {
+    if (widget.selectedDistrictIds.contains(districtId)) {
       return const Color(0xFF3B82F6); // Blue 500 - selected
     }
     return Colors.grey.shade300; // Default
@@ -147,7 +162,7 @@ class _SeoulMapWidgetState extends State<SeoulMapWidget> {
           children: [
             CircularProgressIndicator(),
             SizedBox(height: 16),
-            Text('Loading Seoul districts...'),
+            Text('Loading map data...'),
           ],
         ),
       );
@@ -176,48 +191,55 @@ class _SeoulMapWidgetState extends State<SeoulMapWidget> {
     }
 
     // Create markers for labels
-    final markers = _districtPolygons.map((polygon) {
-      return Marker(
-        point: _calculateCentroid(polygon.points),
-        width: 80,
-        height: 30,
-        child: IgnorePointer( // Allow tapping through the label to the polygon
-          child: Center(
-            child: Text(
-              polygon.districtName,
-              style: TextStyle(
-                color: widget.selectedDistrictId == polygon.districtId
-                    ? Colors.white
-                    : Colors.black87,
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-                shadows: [
-                  Shadow(
-                    offset: const Offset(1, 1),
-                    blurRadius: 2,
-                    color: Colors.white.withValues(alpha: 0.8),
+    // We might have multiple polygons for one district (MultiPolygon), so we deduplicate labels
+    final shownLabels = <String>{};
+    final markers = <Marker>[];
+
+    for (var polygon in _districtPolygons) {
+       if (!shownLabels.contains(polygon.districtId)) {
+          shownLabels.add(polygon.districtId);
+          markers.add(Marker(
+            point: _calculateCentroid(polygon.points),
+            width: 80,
+            height: 30,
+            child: IgnorePointer(
+              child: Center(
+                child: Text(
+                  polygon.districtName,
+                  style: TextStyle(
+                    color: widget.selectedDistrictIds.contains(polygon.districtId)
+                        ? Colors.white
+                        : Colors.black87,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    shadows: [
+                      Shadow(
+                        offset: const Offset(1, 1),
+                        blurRadius: 2,
+                        color: Colors.white.withValues(alpha: 0.8),
+                      ),
+                    ],
                   ),
-                ],
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
             ),
-          ),
-        ),
-      );
-    }).toList();
+          ));
+       }
+    }
+
 
     return FlutterMap(
       options: MapOptions(
-        initialCenter: _seoulCenter,
-        initialZoom: 10.5,
-        minZoom: 10.0,
-        maxZoom: 13.0,
+        initialCenter: widget.initialCenter,
+        initialZoom: widget.initialZoom,
+        minZoom: widget.initialZoom - 1.0,
+        maxZoom: widget.initialZoom + 3.0,
         interactionOptions: const InteractionOptions(
           flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
         ),
         onTap: (tapPosition, latLng) {
-          // Handle tap on map polygons
           _handleMapTap(latLng);
         },
       ),
@@ -226,11 +248,9 @@ class _SeoulMapWidgetState extends State<SeoulMapWidget> {
           urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
           userAgentPackageName: 'com.gotnunchi.app',
         ),
-        // Render polygons from GeoJSON
         if (_districtPolygons.isNotEmpty)
           PolygonLayer(
             polygons: _districtPolygons.map((districtPolygon) {
-              final isSelected = districtPolygon.districtId == widget.selectedDistrictId;
               return Polygon(
                 points: districtPolygon.points,
                 color: _getPolygonColor(districtPolygon.districtId).withValues(alpha: 0.7),
@@ -242,8 +262,7 @@ class _SeoulMapWidgetState extends State<SeoulMapWidget> {
             }).toList(),
           ),
         
-        // Render labels on top
-        if (_districtPolygons.isNotEmpty)
+        if (markers.isNotEmpty)
           MarkerLayer(markers: markers),
       ],
     );
@@ -260,7 +279,6 @@ class _SeoulMapWidgetState extends State<SeoulMapWidget> {
   }
 
   void _handleMapTap(LatLng latLng) {
-    // Find which polygon was tapped
     for (var districtPolygon in _districtPolygons) {
       if (_isPointInPolygon(latLng, districtPolygon.points)) {
         widget.onDistrictTap(districtPolygon.districtId);

@@ -20,42 +20,55 @@ class AppLogoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final logo = Image.asset(
-      'assets/gotnunchi_logo.png',
-      height: height,
-      fit: BoxFit.contain,
-      errorBuilder: (context, error, stackTrace) {
-        // Fallback text if logo fails to load
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondary,
-            borderRadius: BorderRadius.circular(4),
+    final content = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Image.asset(
+          'assets/gotnunchi_logo.png',
+          height: height,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondary,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: const Text(
+                'GN',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+            );
+          },
+        ),
+        const SizedBox(height: 4),
+        Text(
+          "Don't just live in Korea, have Nunchi.",
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary, // Use primary color (Olive)
+            fontSize: 12,
+            fontStyle: FontStyle.italic,
+            fontWeight: FontWeight.w500,
           ),
-          child: const Text(
-            'GN',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
-        );
-      },
+        ),
+      ],
     );
 
     if (!enableHomeNavigation) {
-      return logo;
+      return content;
     }
 
     return GestureDetector(
       onTap: () {
-        // Navigate to home only if not already there
         if (GoRouterState.of(context).uri.path != '/') {
           context.go('/');
         }
       },
-      child: logo,
+      child: content,
     );
   }
 }

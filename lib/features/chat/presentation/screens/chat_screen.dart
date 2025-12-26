@@ -4,7 +4,9 @@ import 'package:gotnunchi/features/chat/presentation/providers/chat_providers.da
 import 'package:intl/intl.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
-  const ChatScreen({super.key});
+  final String roomId;
+
+  const ChatScreen({super.key, required this.roomId});
 
   @override
   ConsumerState<ChatScreen> createState() => _ChatScreenState();
@@ -15,17 +17,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   void _sendMessage() {
     if (_textController.text.trim().isEmpty) return;
-    ref.read(chatRepositoryProvider).sendMessage(_textController.text);
+    ref.read(chatRepositoryProvider).sendMessage(widget.roomId, _textController.text);
     _textController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
-    final messagesAsyncValue = ref.watch(chatMessagesProvider);
+    final chatRoom = ref.watch(chatRoomProvider(widget.roomId));
+    final messagesAsyncValue = ref.watch(chatMessagesProvider(widget.roomId));
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Community Chat (Ephemeral)'),
+        title: Text(chatRoom?.otherUserName ?? 'Chat'),
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline),

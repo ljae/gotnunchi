@@ -111,4 +111,38 @@ class RegionData {
   static bool hasSubMap(String regionId) {
     return regionId == seoulId || regionId == gyeonggiId;
   }
+
+  /// Get region name (supports both province-level and district-level IDs)
+  static String getRegionName(String regionId) {
+    // Check if it's a district ID
+    final allDistricts = [...seoulDistricts, ...gyeonggiDistricts];
+    for (var district in allDistricts) {
+      if (district['id'] == regionId) {
+        return district['nameKo']!;
+      }
+    }
+
+    // Map of province-level region IDs to Korean names
+    const Map<String, String> provinceNames = {
+      'KR-11': '서울',
+      'KR-26': '부산',
+      'KR-27': '대구',
+      'KR-28': '인천',
+      'KR-29': '광주',
+      'KR-30': '대전',
+      'KR-31': '울산',
+      'KR-50': '세종',
+      'KR-41': '경기',
+      'KR-42': '강원',
+      'KR-43': '충북',
+      'KR-44': '충남',
+      'KR-45': '전북',
+      'KR-46': '전남',
+      'KR-47': '경북',
+      'KR-48': '경남',
+      'KR-49': '제주',
+    };
+
+    return provinceNames[regionId] ?? regionId;
+  }
 }

@@ -4,61 +4,107 @@ import 'package:google_fonts/google_fonts.dart';
 class AppTheme {
   static final ThemeData lightTheme = ThemeData(
     useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: const Color(0xFF979585), // Extracted from logo
-      brightness: Brightness.light,
-      primary: const Color(0xFF979585),
-      // Remove hardcoded secondary/surface to let seedColor generate harmonious palette
+    colorScheme: const ColorScheme.light(
+      primary: Color(0xFF1A1A1A), // Near black
+      onPrimary: Colors.white,
+      secondary: Color(0xFF4A4A4A),
+      onSecondary: Colors.white,
+      surface: Color(0xFFFAFAFA), // Off white
+      onSurface: Color(0xFF1A1A1A),
+      surfaceContainerHighest: Colors.white,
+      outline: Color(0xFFE0E0E0),
     ),
-    scaffoldBackgroundColor: const Color(0xFFFAFAF9), // Warm grey/stone 50
+    scaffoldBackgroundColor: const Color(0xFFFAFAFA),
     appBarTheme: AppBarTheme(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFFAFAFA),
+      foregroundColor: const Color(0xFF1A1A1A),
       elevation: 0,
-      centerTitle: true,
-      iconTheme: const IconThemeData(color: Color(0xFF979585)), // Use logo color for icons
-      titleTextStyle: GoogleFonts.outfit(
-        color: const Color(0xFF4A4941), // Darker version of logo color for contrast
+      centerTitle: false,
+      titleTextStyle: GoogleFonts.inter(
+        color: const Color(0xFF1A1A1A),
         fontSize: 20,
         fontWeight: FontWeight.w600,
+        letterSpacing: -0.5,
       ),
     ),
-    fontFamily: GoogleFonts.outfit().fontFamily,
-    textTheme: GoogleFonts.outfitTextTheme().copyWith(
-      headlineLarge: const TextStyle(
-        fontSize: 32,
-        fontWeight: FontWeight.bold,
-        color: Color(0xFF1E293B),
-      ),
-      headlineMedium: const TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.w600,
-        color: Color(0xFF1E293B),
-      ),
-      titleMedium: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.w500,
-        color: Color(0xFF334155),
-      ),
-      bodyLarge: const TextStyle(
-        fontSize: 16,
-        color: Color(0xFF334155),
-      ),
-      bodyMedium: const TextStyle(
-        fontSize: 14,
-        color: Color(0xFF475569),
+    cardTheme: CardThemeData(
+      elevation: 0,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: const BorderSide(color: Color(0xFFE0E0E0)),
       ),
     ),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
-      backgroundColor: Color(0xFF979585),
+      backgroundColor: Color(0xFF1A1A1A),
       foregroundColor: Colors.white,
+      elevation: 2,
     ),
-    // cardTheme: CardTheme(
-    //   elevation: 0,
-    //   shape: RoundedRectangleBorder(
-    //     borderRadius: BorderRadius.circular(16),
-    //     side: const BorderSide(color: Color(0xFFE2E8F0)),
-    //   ),
-    //   color: Colors.white,
-    // ),
+    chipTheme: ChipThemeData(
+      backgroundColor: const Color(0xFFF5F5F5),
+      selectedColor: const Color(0xFF1A1A1A).withOpacity(0.1),
+      labelStyle: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w500),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+    ),
+    navigationBarTheme: NavigationBarThemeData(
+      backgroundColor: Colors.white,
+      indicatorColor: const Color(0xFF1A1A1A).withOpacity(0.08),
+      elevation: 0,
+      labelTextStyle: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return GoogleFonts.inter(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF1A1A1A),
+          );
+        }
+        return GoogleFonts.inter(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          color: Colors.grey[600],
+        );
+      }),
+      iconTheme: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return const IconThemeData(color: Color(0xFF1A1A1A), size: 24);
+        }
+        return IconThemeData(color: Colors.grey[600], size: 24);
+      }),
+    ),
+    textTheme: GoogleFonts.interTextTheme().copyWith(
+      displayLarge: const TextStyle(
+        fontSize: 32,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -1,
+        color: Color(0xFF1A1A1A),
+      ),
+      titleLarge: const TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.5,
+        color: Color(0xFF1A1A1A),
+      ),
+      titleMedium: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.3,
+        color: Color(0xFF1A1A1A),
+      ),
+      bodyLarge: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        height: 1.5,
+        color: Color(0xFF333333),
+      ),
+      bodyMedium: const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        height: 1.5,
+        color: Color(0xFF666666),
+      ),
+    ),
   );
 }

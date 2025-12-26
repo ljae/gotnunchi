@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "861969093408",
+    "project_id": "gotnunchi-cc782",
+    "storage_bucket": "gotnunchi-cc782.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:861969093408:android:5d40a51ac8d1054ce0bd45",
+        "android_client_info": {
+          "package_name": "com.gotnunchi.gotnunchi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDpqZaRsuT8O9DbrHMIhiFS54tjbEVW3A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

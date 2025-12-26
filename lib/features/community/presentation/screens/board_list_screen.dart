@@ -44,7 +44,8 @@ class BoardListWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final postsAsyncValue = ref.watch(postsByRegionProvider(regionIds));
+    final regionIdsString = regionIds.join(',');
+    final postsAsyncValue = ref.watch(postsByRegionProvider(regionIdsString));
 
     return postsAsyncValue.when(
       data: (posts) {

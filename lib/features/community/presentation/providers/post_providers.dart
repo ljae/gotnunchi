@@ -6,10 +6,14 @@ final postRepositoryProvider = Provider<MockPostRepository>((ref) {
   return MockPostRepository();
 });
 
-final postsByRegionProvider = FutureProvider.family<List<Post>, List<String>>((ref, regionIds) async {
-  final repository = ref.watch(postRepositoryProvider);
+// Use String instead of List<String> for better caching
+final postsByRegionProvider = FutureProvider.family<List<Post>, String>((ref, regionIdsString) async {
+  final regionIds = regionIdsString.split(',');
+  final repository = ref.read(postRepositoryProvider);
+
   // Simulate network delay
   await Future.delayed(const Duration(milliseconds: 500));
+
   return repository.getPostsByRegion(regionIds);
 });
 

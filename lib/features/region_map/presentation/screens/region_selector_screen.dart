@@ -65,22 +65,20 @@ class _RegionSelectorScreenState extends ConsumerState<RegionSelectorScreen>
                     padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
                     child: Row(
                       children: [
-                        // Logo
+                        // Logo (2x bigger)
                         Container(
-                          width: 50,
-                          height: 50,
+                          width: 100,
+                          height: 100,
                           decoration: BoxDecoration(
-                            color: Colors.white,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.2),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
+                                color: Colors.black.withValues(alpha: 0.3),
+                                blurRadius: 16,
+                                offset: const Offset(0, 4),
                               ),
                             ],
                           ),
-                          padding: const EdgeInsets.all(4),
                           child: ClipOval(
                             child: Image.asset(
                               'assets/gotnunchi_logo.png',
@@ -88,7 +86,7 @@ class _RegionSelectorScreenState extends ConsumerState<RegionSelectorScreen>
                             ),
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 16),
                         // Title
                         Expanded(
                           child: Column(

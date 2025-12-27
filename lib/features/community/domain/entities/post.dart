@@ -1,5 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+enum PostCategory {
+  questionOnTheTown('Question on the town'),
+  visa('Visa & Immigration'),
+  housing('Housing & Living'),
+  medical('Medical & Health'),
+  life('Life in Korea'),
+  jobs('Jobs & Careers'),
+  social('Social & Meetups'),
+  food('Food & Travel');
+
+  final String label;
+  const PostCategory(this.label);
+
+  static PostCategory fromString(String? value) {
+    return PostCategory.values.firstWhere(
+      (e) => e.name == value,
+      orElse: () => PostCategory.life, // Default to Life in Korea
+    );
+  }
+}
+
 class Post {
   final String id;
   final String title;
@@ -9,6 +30,7 @@ class Post {
   final DateTime date;
   final String regionId;
   final int commentCount;
+  final PostCategory category;
 
   Post({
     required this.id,
@@ -19,6 +41,7 @@ class Post {
     required this.date,
     required this.regionId,
     required this.commentCount,
+    required this.category,
   });
 
   // Convert to Firestore document
@@ -31,6 +54,7 @@ class Post {
       'date': Timestamp.fromDate(date),
       'regionId': regionId,
       'commentCount': commentCount,
+      'category': category.name,
     };
   }
 
@@ -46,6 +70,7 @@ class Post {
       date: (data['date'] as Timestamp).toDate(),
       regionId: data['regionId'] ?? '',
       commentCount: data['commentCount'] ?? 0,
+      category: PostCategory.fromString(data['category']),
     );
   }
 }

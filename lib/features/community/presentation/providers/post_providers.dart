@@ -6,15 +6,34 @@ final postRepositoryProvider = Provider<MockPostRepository>((ref) {
   return MockPostRepository();
 });
 
-// Use String instead of List<String> for better caching
-final postsByRegionProvider = FutureProvider.family<List<Post>, String>((ref, regionIdsString) async {
-  final regionIds = regionIdsString.split(',');
+class PostFilter {
+  final List<String> regionIds;
+  final PostCategory? category;
+
+  PostFilter({
+    required this.regionIds,
+    this.category,
+  });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PostFilter &&
+          runtimeType == other.runtimeType &&
+          regionIds.join(',') == other.regionIds.join(',') &&
+          category == other.category;
+
+  @override
+  int get hashCode => regionIds.join(',').hashCode ^ category.hashCode;
+}
+
+final postsByRegionProvider = FutureProvider.family<List<Post>, PostFilter>((ref, filter) async {
   final repository = ref.read(postRepositoryProvider);
 
   // Simulate network delay
   await Future.delayed(const Duration(milliseconds: 500));
 
-  return repository.getPostsByRegion(regionIds);
+  return repository.getPostsByRegion(filter.regionIds, category: filter.category);
 });
 
 final postProvider = FutureProvider.family<Post?, String>((ref, postId) async {

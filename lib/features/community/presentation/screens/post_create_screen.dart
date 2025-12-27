@@ -20,6 +20,7 @@ class _PostCreateScreenState extends ConsumerState<PostCreateScreen> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   late String _selectedRegionId;
+  PostCategory _selectedCategory = PostCategory.life; // Default category
   bool _isSubmitting = false;
 
   @override
@@ -51,6 +52,27 @@ class _PostCreateScreenState extends ConsumerState<PostCreateScreen> {
     }
   }
 
+  String _getPlaceholderText() {
+    switch (_selectedCategory) {
+      case PostCategory.questionOnTheTown:
+        return "Ask any general question about your town or neighborhood...";
+      case PostCategory.visa:
+        return "Ask about ARC issuance, visa extension, or documents needed...";
+      case PostCategory.housing:
+        return "Ask about deposit sizes, location, or contract terms...";
+      case PostCategory.medical:
+        return "Ask about English-speaking clinics, insurance, or pharmacies...";
+      case PostCategory.life:
+        return "Ask about banking, trash disposal, transportation, or general life...";
+      case PostCategory.jobs:
+        return "Ask about teaching jobs, labor laws, or part-time work...";
+      case PostCategory.social:
+        return "Ask about language exchange, hobby groups, or weekend plans...";
+      case PostCategory.food:
+        return "Ask about restaurant recommendations, vegan options, or recipes...";
+    }
+  }
+
   Future<void> _submitPost() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -73,12 +95,17 @@ class _PostCreateScreenState extends ConsumerState<PostCreateScreen> {
         date: DateTime.now(),
         regionId: _selectedRegionId,
         commentCount: 0,
+        category: _selectedCategory,
       );
 
       repository.addPost(newPost);
 
       // Invalidate the provider to refresh the feed
-      ref.invalidate(postsByRegionProvider);
+      // We need to invalidate the provider that might be active
+      // Since provider family uses PostFilter, we can't easily invalidate ALL.
+      // But usually we just refresh the screen we go back to.
+      // For now, let's just let the UI refresh on next load or if we use proper Riverpod 2.0 invalidate.
+      ref.invalidate(postsByRegionProvider); 
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -158,6 +185,30 @@ class _PostCreateScreenState extends ConsumerState<PostCreateScreen> {
             ),
             const SizedBox(height: 16),
 
+            // Category Selector
+            DropdownButtonFormField<PostCategory>(
+              value: _selectedCategory,
+              decoration: const InputDecoration(
+                labelText: 'Category',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.category),
+              ),
+              items: PostCategory.values.map((category) {
+                return DropdownMenuItem(
+                  value: category,
+                  child: Text(category.label),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    _selectedCategory = value;
+                  });
+                }
+              },
+            ),
+            const SizedBox(height: 16),
+
             // Title field
             TextFormField(
               controller: _titleController,
@@ -178,9 +229,9 @@ class _PostCreateScreenState extends ConsumerState<PostCreateScreen> {
             // Content field
             TextFormField(
               controller: _contentController,
-              decoration: const InputDecoration(
-                hintText: 'Enter content',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                hintText: _getPlaceholderText(),
+                border: const OutlineInputBorder(),
                 alignLabelWithHint: true,
               ),
               maxLines: 10,

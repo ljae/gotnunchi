@@ -7,14 +7,24 @@ import '../../../../core/constants/region_data.dart';
 import '../../../../core/providers/selected_regions_provider.dart';
 import '../../../../core/theme/app_theme.dart';
 
-class CommunityFeedScreen extends ConsumerWidget {
+class CommunityFeedScreen extends ConsumerStatefulWidget {
   const CommunityFeedScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CommunityFeedScreen> createState() => _CommunityFeedScreenState();
+}
+
+class _CommunityFeedScreenState extends ConsumerState<CommunityFeedScreen> {
+  PostCategory? _selectedCategory;
+
+  @override
+  Widget build(BuildContext context) {
     final selectedRegions = ref.watch(selectedRegionsProvider);
-    final regionIdsString = selectedRegions.join(',');
-    final postsAsync = ref.watch(postsByRegionProvider(regionIdsString));
+
+    final postsAsync = ref.watch(postsByRegionProvider(PostFilter(
+      regionIds: selectedRegions.toList(),
+      category: _selectedCategory,
+    )));
 
     return Scaffold(
       backgroundColor: AppTheme.lightCream,
@@ -148,6 +158,31 @@ class CommunityFeedScreen extends ConsumerWidget {
                 ],
               ),
             ),
+            // Category filter chips
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primaryTeal.withValues(alpha: 0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: SizedBox(
+                height: 42,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  children: [
+                    _buildCategoryChip(null, 'All'),
+                    ...PostCategory.values.map((category) => _buildCategoryChip(category, category.label)),
+                  ],
+                ),
+              ),
+            ),
             // Posts feed
             Expanded(
               child: postsAsync.when(
@@ -258,6 +293,39 @@ class CommunityFeedScreen extends ConsumerWidget {
           style: Theme.of(context).textTheme.labelLarge?.copyWith(
             color: Colors.white,
             fontSize: 15,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryChip(PostCategory? category, String label) {
+    final isSelected = _selectedCategory == category;
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: ChoiceChip(
+        label: Text(label),
+        selected: isSelected,
+        onSelected: (bool selected) {
+          if (selected) {
+            setState(() {
+              _selectedCategory = category;
+            });
+          }
+        },
+        selectedColor: AppTheme.primaryTeal.withValues(alpha: 0.2),
+        backgroundColor: AppTheme.warmCream.withValues(alpha: 0.3),
+        labelStyle: TextStyle(
+          color: isSelected ? AppTheme.darkTeal : const Color(0xFF6A6A6A),
+          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+          fontSize: 13,
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(
+            color: isSelected ? AppTheme.primaryTeal : Colors.transparent,
+            width: 1.5,
           ),
         ),
       ),
